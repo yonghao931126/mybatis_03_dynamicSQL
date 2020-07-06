@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--mybatis的主配置文件-->
+<configuration>
+    <!--properties标签-->
+    <properties resource="jdbcConfig.properties">
+        <!--配置数据库基本信息-->
+        <!--
+        可以再标签内部配置连接数据库信息,也可以通过属性引用外部配置文件
+        resources标签属性:
+            用于指定配置文件的位置,按照类路径的写法来写,并且必须在类路径下.
+        url标签属性
+            要求按照url的写法来书写地址
+            URL 统一资源定位符 可以唯一标志资源的位置
+            协议    主机       端口  uri
+            http://localhost:8080/eesy
+            URI 统一资源标识符 在应用中可以唯一定位资源
+            resources="jdbcConfig.properties"
+            url="E:\Data\mybatis_02_CRUD\src\main\resources\jdbcConfig.properties"
+        -->
+        <!--<property name="driver" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/eesy"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>-->
+    </properties>
+
+    <!--typeAliases配置别名,他只能配置domain中类的别名-->
+    <typeAliases>
+        <!--type:指的是实体类的全限定类名
+            alias别名 当指定了别名不在区分大小写
+            package:用于指定配置别名的包,当制定后,该包下实体类都会注册别名,并且类名就是别名 不区分大小写
+        -->
+        <typeAlias type="com.haojie.domain.User" alias="user"></typeAlias>
+        <package name="com.haojie.domain"></package>
+    </typeAliases>
+    <!--配置环境-->
+    <environments default="mysql">
+        <!--配置mysql环境-->
+        <environment id="mysql">
+            <!--配置事务类型-->
+            <transactionManager type="JDBC"></transactionManager>
+            <!--配置数据源  连接池-->
+            <dataSource type="POOLED">
+                <!--配置数据库基本信息-->
+                <property name="driver" value="${jdbc.driver}"></property>
+                <property name="url" value="${jdbc.url}"></property>
+                <property name="username" value="${jdbc.username}"></property>
+                <property name="password" value="${jdbc.password}"></property>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--指定映射配置文件的位置,映射配置文件指的时每个岛独立的配置文件-->
+    <mappers>
+        <!--<mapper resource="com/haojie/dao/IUserDao.xml"></mapper>-->
+        <!--package 用于指定dao接口所在的包,当指定之后不需在写mapper以及resources 或class-->
+        <package name="com.haojie.dao"></package>
+    </mappers>
+</configuration>

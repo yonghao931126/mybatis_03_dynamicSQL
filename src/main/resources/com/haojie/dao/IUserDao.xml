@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haojie.dao.IUserDao">
+    <!--配置resultMap类型 即查询结果的列名和实体类的属性名的对应关系-->
+    <resultMap id="userMap" type="com.haojie.domain.User">
+        <!--主键字段-->
+        <id property="userId" column="id"></id>
+        <!--非主键字段-->
+        <result property="userName" column="username"></result>
+        <result property="userAddress" column="address"></result>
+        <result property="userSex" column="sex"></result>
+        <result property="userBirthday" column="birthday"></result>
+    </resultMap>
+
+    <!--当配置了typeAliases标签           -->
+    <resultMap id="userMap1" type="user">
+        <!--主键字段-->
+        <id property="userId" column="id"></id>
+        <!--非主键字段-->
+        <result property="userName" column="username"></result>
+        <result property="userAddress" column="address"></result>
+        <result property="userSex" column="sex"></result>
+        <result property="userBirthday" column="birthday"></result>
+    </resultMap>
+    <!--抽取重复的sql 都可以使用-->
+    <sql id="defaultUser">
+        select * from user
+    </sql>
+    <!--配置查询所有-->
+    <select id="findAll" resultMap="userMap">
+        <!--select * from user   使用重复的sql语句-->
+        <include refid="defaultUser"></include>
+    </select>
+    <!--查询单个-->
+    <select id="findById" parameterType="INT" resultMap="userMap">
+        select  * from user where id =#{id}
+    </select>
+    <!--模糊查询-->
+    <select id="findByUsername" parameterType="string" resultMap="userMap">
+        <!--select * from user where username like '%${value}%'-->
+        select * from user where username like #{userName}
+    </select>
+    <!--根据queryvo的条件查询用户-->
+    <select id="findUserByVo" parameterType="com.haojie.domain.QueryVo" resultMap="userMap">
+        select * from user where username like #{user.userName}
+    </select>
+    <!--根据条件查询  <if>标签  和 <where>标签使用-->
+    <select id="findUserByCondition" resultMap="userMap" parameterType="user">
+        <!--方法一 : select * from user where 1=1
+        <if test="userName!=null">
+          and  username=#{userName}
+        </if>
+        <if test="userSex!=null">
+            and sex=#{userSex}
+        </if>-->
+        <include refid="defaultUser"></include>
+        <where>
+            <if test="userName!=null">
+                and username=#{userName}
+            </if>
+            <if test="userSex!=null">
+                and sex=#{userSex}
+            </if>
+        </where>
+    </select>
+    <select id="findUserInIds" resultMap="userMap" parameterType="QueryVo">
+        <include refid="defaultUser"></include>
+        <where>
+            <if test="ids !=null and ids.size()>0">
+                <foreach collection="ids" open="and id in ( " close=")" item="id" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+</mapper>
